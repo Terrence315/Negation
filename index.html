@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Geometry Unit 2 - Negation Practice</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f4f6f8;margin:0;color:#1f2937} .wrap{max-width:900px;margin:auto;padding:24px}
+header,.card{background:white;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px #0001}
+h1{margin:0 0 8px} .rule{background:#eef2ff;padding:12px;border-left:4px solid #4f46e5;margin-top:12px}
+.choice{display:block;border:1px solid #d1d5db;padding:10px;margin:8px 0;border-radius:8px;cursor:pointer}
+.choice:hover{background:#f9fafb} button{padding:10px 16px;border:0;border-radius:8px;cursor:pointer;font-weight:700}
+.primary{background:#111827;color:white} .secondary{background:#e5e7eb} .feedback{font-weight:700;margin-top:8px}
+.correct{color:#166534} .wrong{color:#b91c1c} #score{font-size:1.15rem;font-weight:700}
+.controls{display:flex;gap:10px;flex-wrap:wrap} .small{color:#4b5563;font-size:.95rem}
+</style></head>
+<body><div class="wrap">
+<header><h1>Geometry Unit 2: Negation</h1>
+<p>Practice identifying and writing negations. Each new set randomly selects questions and shuffles the answer choices.</p>
+<div class="rule"><b>Key rule:</b> ~p means “not p.” If p is true, ~p is false; if p is false, ~p is true. Also, ~~p returns to p.</div>
+</header>
+<div class="card controls">
+<label>Questions per set: <select id="count"><option>10</option><option selected>20</option><option>30</option><option>40</option></select></label>
+<button class="secondary" onclick="newSet()">New Random Set</button>
+<button class="primary" onclick="submitSet()">Submit Assignment</button>
+<span id="score"></span>
+</div>
+<div id="quiz"></div>
+</div>
+<script>
+const bank=[{"q": "A negation of a statement p is best described as:", "opts": ["p is true", "not p", "p and q", "p or q"], "correct": 1}, {"q": "Which symbol is used in the lesson for the negation of p?", "opts": ["~p", "p \u2228 q", "p \u2227 q", "p = q"], "correct": 0}, {"q": "If p is true, then ~p is:", "opts": ["also true", "sometimes true", "false", "not a statement"], "correct": 2}, {"q": "If p is false, then ~p is:", "opts": ["false", "undefined", "sometimes false", "true"], "correct": 3}, {"q": "p: It is raining. Which is ~p?", "opts": ["It is not raining.", "It might rain.", "It rained yesterday.", "It is cloudy."], "correct": 0}, {"q": "p: The lights are on. Which is ~p?", "opts": ["The lights are bright.", "The lights are not on.", "The lights are new.", "The lights are on."], "correct": 1}, {"q": "p: A triangle has six sides. Which is ~p?", "opts": ["A triangle has three sides.", "A triangle has sides.", "A triangle does not have six sides.", "A triangle has exactly six sides."], "correct": 2}, {"q": "p: It is not cold. Which is ~p?", "opts": ["It is warm.", "It is mildly cold.", "It is not warm.", "It is cold."], "correct": 3}, {"q": "p: The grass is green. What is ~~p?", "opts": ["The grass is green.", "The grass is not green.", "The grass is short.", "The grass was green."], "correct": 0}, {"q": "If p: 5 + 4 = 9, what is ~p?", "opts": ["5 + 4 = 10", "5 + 4 \u2260 9", "5 - 4 = 9", "5 \u00d7 4 = 9"], "correct": 1}, {"q": "p: Geometry is interesting. Which is ~p?", "opts": ["Geometry is difficult.", "Geometry is mathematics.", "Geometry is not interesting.", "Geometry is always interesting."], "correct": 2}, {"q": "p: My dog has fleas. Which is ~p?", "opts": ["My dog has a collar.", "My dog is outside.", "My dog has fleas.", "My dog does not have fleas."], "correct": 3}, {"q": "p: Milk tastes good. Which is ~p?", "opts": ["Milk does not taste good.", "Milk is cold.", "Milk is white.", "Milk tastes good."], "correct": 0}, {"q": "p: This rose is white. Which is ~p?", "opts": ["This rose is red.", "This rose is not white.", "This rose is a flower.", "This rose is white."], "correct": 1}, {"q": "p: A line has no length. Which is ~p?", "opts": ["A line is straight.", "A line has points.", "A line has length.", "A line has no endpoints."], "correct": 2}, {"q": "p: Two points determine a line. Which is ~p?", "opts": ["Two points are collinear.", "Two points determine a line.", "A line contains points.", "Two points do not determine a line."], "correct": 3}, {"q": "p: A line does not have a midpoint. Which is ~p?", "opts": ["A line does have a midpoint.", "A line has no endpoints.", "A segment has a midpoint.", "A line is straight."], "correct": 0}, {"q": "p: Lines a and b are parallel. Which is the direct negation?", "opts": ["Lines a and b are perpendicular.", "Lines a and b are not parallel.", "Lines a and b intersect at 90\u00b0.", "Lines a and b are segments."], "correct": 1}, {"q": "p: The sun is not shining. Which is ~p?", "opts": ["It is cloudy.", "The sun is warm.", "The sun is shining.", "It is daytime."], "correct": 2}, {"q": "p: It is not raining. Which is ~p?", "opts": ["It is cloudy.", "It may rain.", "It is not sunny.", "It is raining."], "correct": 3}, {"q": "If p is the statement '8 is even,' which statement is ~p?", "opts": ["8 is not even.", "8 is divisible by 2.", "8 is an integer.", "8 is even."], "correct": 0}, {"q": "If p: 12 > 5, what is ~p?", "opts": ["12 = 5", "12 is not greater than 5", "12 > 0", "5 < 12"], "correct": 1}, {"q": "If p: 7 is odd, what is ~p?", "opts": ["7 is prime.", "7 is positive.", "7 is not odd.", "7 is odd."], "correct": 2}, {"q": "If p: 0 is an integer, what is ~p?", "opts": ["0 is even.", "0 is a whole number.", "0 is an integer.", "0 is not an integer."], "correct": 3}, {"q": "Which pair consists of a statement and its negation?", "opts": ["'It is cloudy' / 'It is not cloudy'", "'It is cloudy' / 'It is raining'", "'5 is odd' / '5 is prime'", "'A line is straight' / 'A ray has an endpoint'"], "correct": 0}, {"q": "Which pair is NOT a statement and its negation?", "opts": ["'The light is on' / 'The light is not on'", "'3 is odd' / '3 is prime'", "'It is raining' / 'It is not raining'", "'The rose is white' / 'The rose is not white'"], "correct": 1}, {"q": "The negation of a true statement has which truth value?", "opts": ["Cannot be known", "True", "False", "Both true and false"], "correct": 2}, {"q": "The negation of a false statement has which truth value?", "opts": ["False", "Cannot be known", "Neither", "True"], "correct": 3}, {"q": "Which statement correctly describes double negation?", "opts": ["~~p has the same meaning as p.", "~~p always means not p.", "~~p is always false.", "~~p is not a statement."], "correct": 0}, {"q": "If ~p is false, what must be true about p?", "opts": ["p is false", "p is true", "p has no truth value", "p is a question"], "correct": 1}, {"q": "If ~p is true, what must be true about p?", "opts": ["p is true", "p is sometimes true", "p is false", "p is a command"], "correct": 2}, {"q": "If ~p is 'The door is not open,' what is p?", "opts": ["The door is locked.", "The door is closed.", "The door is not open.", "The door is open."], "correct": 3}, {"q": "If ~p is '2 + 2 \u2260 4,' what is p?", "opts": ["2 + 2 = 4", "2 \u00d7 2 = 4", "2 + 2 = 5", "2 - 2 = 4"], "correct": 0}, {"q": "If ~p is 'A triangle does not have four sides,' what is p?", "opts": ["A triangle has three sides.", "A triangle has four sides.", "A quadrilateral has four sides.", "A triangle is a polygon."], "correct": 1}, {"q": "Which is the best negation of 'The angle is acute'?", "opts": ["The angle is 45\u00b0.", "The angle is obtuse.", "The angle is not acute.", "The angle is a right angle."], "correct": 2}, {"q": "Which is the best negation of 'Point A lies on line m'?", "opts": ["Point A is a point.", "Line m contains points.", "Point A lies on line m.", "Point A does not lie on line m."], "correct": 3}, {"q": "p: 10 < 3. Which is ~p?", "opts": ["10 is not less than 3.", "10 < 4.", "3 < 10.", "10 = 3."], "correct": 0}, {"q": "p: 6 + 3 = 12. Which is ~p?", "opts": ["6 + 3 = 9", "6 + 3 \u2260 12", "6 \u00d7 3 = 12", "6 - 3 = 12"], "correct": 1}, {"q": "p: All pigs are fat. Which wording matches the lesson's direct negation pattern?", "opts": ["All pigs are small.", "Some pigs are fat.", "All pigs are not fat.", "All pigs are animals."], "correct": 2}, {"q": "Which statement is the negation of 'The grass is not green'?", "opts": ["The grass is short.", "The grass is brown.", "The grass is not green.", "The grass is green."], "correct": 3}, {"q": "p: 15 is odd. Which is ~p?", "opts": ["15 is not odd.", "15 is prime.", "15 is positive.", "15 is odd."], "correct": 0}, {"q": "p: A square has four sides. Which is ~p?", "opts": ["A square has equal sides.", "A square does not have four sides.", "A square is a quadrilateral.", "A square has four sides."], "correct": 1}, {"q": "p: 9 = 3\u00b2. Which is ~p?", "opts": ["9 = 3 + 6", "9 > 3", "9 \u2260 3\u00b2", "3\u00b2 = 9"], "correct": 2}, {"q": "p: The window is not open. Which is ~p?", "opts": ["The window is clean.", "The window is closed.", "The window is not open.", "The window is open."], "correct": 3}];
+let current=[];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function newSet(){
+ document.getElementById('score').textContent='';
+ const n=+document.getElementById('count').value;
+ current=shuffle(bank.map((x,idx)=>({...x,id:idx}))).slice(0,Math.min(n,bank.length)).map(x=>{
+   const mapped=x.opts.map((text,i)=>({text,ok:i===x.correct})); shuffle(mapped); return {...x,mapped};
+ });
+ render();
+}
+function render(){
+ const root=document.getElementById('quiz'); root.innerHTML='';
+ current.forEach((x,i)=>{
+  const card=document.createElement('div'); card.className='card';
+  card.innerHTML=`<b>${i+1}. ${x.q}</b><div class="answers"></div><div class="feedback" id="f${i}"></div>`;
+  const a=card.querySelector('.answers');
+  x.mapped.forEach((o,j)=>{
+    const lab=document.createElement('label'); lab.className='choice';
+    lab.innerHTML=`<input type="radio" name="q${i}" value="${j}"> ${String.fromCharCode(65+j)}. ${o.text}`;
+    a.appendChild(lab);
+  });
+  root.appendChild(card);
+ });
+}
+function submitSet(){
+ let right=0, answered=0;
+ current.forEach((x,i)=>{
+  const picked=document.querySelector(`input[name=q${i}]:checked`);
+  const f=document.getElementById('f'+i);
+  if(!picked){f.className='feedback wrong';f.textContent='Not answered.';return}
+  answered++;
+  const obj=x.mapped[+picked.value];
+  if(obj.ok){right++;f.className='feedback correct';f.textContent='Correct.'}
+  else {
+    const correct=x.mapped.find(o=>o.ok).text;
+    f.className='feedback wrong'; f.textContent='Incorrect. Correct answer: '+correct;
+  }
+ });
+ const pct=Math.round(100*right/current.length);
+ document.getElementById('score').textContent=`Score: ${right}/${current.length} (${pct}%)`;
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+newSet();
+</script></body></html>
